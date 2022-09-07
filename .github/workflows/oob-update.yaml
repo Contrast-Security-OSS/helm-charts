@@ -41,6 +41,12 @@ jobs:
           Write-Host "::set-output name=artifact-name::$artifactName"
         shell: pwsh
 
+      - name: Wait for Workflow
+        run: |
+          # Super hacky, but there's not a great way to wait for an action to completely (by run id).
+          Start-Sleep -Seconds 15
+        shell: pwsh
+
       - name: Download Chart
         id: download-artifact
         uses: dawidd6/action-download-artifact@v2
@@ -96,10 +102,10 @@ jobs:
             oob-update
           token: ${{ secrets.GH_PR_WRITE_PAT }}
 
-      # - uses: peter-evans/enable-pull-request-automerge@v2
-      #   if: steps.create-pr.outputs.pull-request-operation == 'created'
-      #   with:
-      #     # Uses the dispatch service user, using the dotnet PAT.
-      #     token: ${{ secrets.GH_PR_WRITE_PAT }}
-      #     pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
-      #     merge-method: rebase
+      - uses: peter-evans/enable-pull-request-automerge@v2
+        if: steps.create-pr.outputs.pull-request-operation == 'created'
+        with:
+          # Uses the dispatch service user, using the dotnet PAT.
+          token: ${{ secrets.GH_PR_WRITE_PAT }}
+          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
+          merge-method: rebase
