@@ -1,0 +1,45 @@
+name: Pipeline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Tree
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: tree
+
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Stage Charts
+        run: |
+          ./build.ps1 -Output ./dist -ChartRepositoryUrl "https://contrastsecurity.dev/helm-charts"
+        shell: pwsh
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist
+  publish:
+    needs: build
+    if: ${{ github.ref == 'refs/heads/master' }}
+    environment:
+      name: github-pages
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
