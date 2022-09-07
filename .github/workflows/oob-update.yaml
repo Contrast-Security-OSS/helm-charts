@@ -1,0 +1,105 @@
+name: "OOB Update"
+on:
+  repository_dispatch:
+    types:
+      - oob-update
+
+jobs:
+  oob-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Validate Event
+        id: validate-event
+        run: |
+          $clientPayload = '${{ toJSON(github.event.client_payload) }}' | ConvertFrom-Json
+          [string] $type = $clientPayload.type
+          [string] $runId = $clientPayload.runId
+          [string] $artifactName = $clientPayload.artifactName
+          [string] $chartPath = "./src/$type"
+          [string] $manifestPath = "$chartPath/manifest.json"
+
+          if (-not (Test-Path -Path $manifestPath))
+          {
+              Write-Error "The $manifestPath does not exist."
+              exit 1
+          }
+          if ($runId -notmatch '^\d+$')
+          {
+              Write-Error "Failed to validate run id."
+              exit 1
+          }
+
+          $manifest = Get-Content -Path $manifestPath | ConvertFrom-Json
+          $repo = $manifest.repo
+
+          Write-Host "::set-output name=type::$type"
+          Write-Host "::set-output name=run-id::$runId"
+          Write-Host "::set-output name=manifest-path::$manifestPath"
+          Write-Host "::set-output name=chart-path::$chartPath"
+          Write-Host "::set-output name=repo::$repo"
+          Write-Host "::set-output name=artifact-name::$artifactName"
+        shell: pwsh
+
+      - name: Download Chart
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GH_PR_WRITE_PAT }}
+          repo: ${{ steps.validate-event.outputs.repo }}
+          run_id: ${{ steps.validate-event.outputs.run-id }}
+          name: ${{ steps.validate-event.outputs.artifact-name }}
+          path: ./dist
+
+      - name: Stage Changes
+        id: stage-changes
+        run: |
+          $dist = './dist'
+          $chartPath = '${{ steps.validate-event.outputs.chart-path }}'
+
+          $helmOutputs = @()
+          Get-ChildItem -Path $dist  -Recurse -Filter *.tgz -File | ForEach-Object {
+              Write-Host "Staging $($_.FullName) -> $chartPath"
+              $helmOutputs += "# helm show chart $($_.FullName)"
+              $helmOutputs += (helm show chart $_.FullName) -join "`n"
+              $_ | Copy-Item -Destination $chartPath
+          }
+
+          $helmOutputJson = $helmOutputs -join "`n`n" | ConvertTo-Json
+
+          Write-Host "::set-output name=helm-output-json::$helmOutputJson"
+        shell: pwsh
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        id: create-pr
+        with:
+          add-paths: |
+            ${{ steps.validate-event.outputs.chartPath }}
+          commit-message: |
+            Upstream publish for '${{ steps.validate-event.outputs.type }}'.
+          branch: actions/oob-${{ steps.validate-event.outputs.type }}-${{ steps.validate-event.outputs.run-id }}
+          title: |
+            [OOB] Upstream Publish for '${{ steps.validate-event.outputs.type }}' (Run ID: ${{ steps.validate-event.outputs.run-id }})
+          body: |
+            Upstream Publish requested by ${{ github.actor }}.
+
+            ```
+            Type: ${{ steps.validate-event.outputs.type }}
+            Run ID: ${{ steps.validate-event.outputs.run-id }}
+            ```
+
+            ```
+            ${{ fromJSON(steps.stage-changes.outputs.helm-output-json) }}
+            ```
+          labels: |
+            oob-update
+          token: ${{ secrets.GH_PR_WRITE_PAT }}
+
+      # - uses: peter-evans/enable-pull-request-automerge@v2
+      #   if: steps.create-pr.outputs.pull-request-operation == 'created'
+      #   with:
+      #     # Uses the dispatch service user, using the dotnet PAT.
+      #     token: ${{ secrets.GH_PR_WRITE_PAT }}
+      #     pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
+      #     merge-method: rebase
