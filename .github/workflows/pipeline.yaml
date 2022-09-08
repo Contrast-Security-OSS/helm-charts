@@ -15,10 +15,6 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Tree
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: tree
       - name: Setup Node
         uses: actions/setup-node@v2
         with:

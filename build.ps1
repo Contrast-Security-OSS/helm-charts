@@ -31,7 +31,6 @@ Write-Host "Generating charts index for $distPath..."
 helm repo index $distPath --url $ChartRepositoryUrl
 
 Write-Host "Generating html index for $distPath..."
-tree -H $ChartRepositoryUrl -L 3 --noreport --charset utf-8 -o $distPath/index.html --du -h -T "Contrast Security, Inc Helm charts" -- $distPath
 
 try
 {
