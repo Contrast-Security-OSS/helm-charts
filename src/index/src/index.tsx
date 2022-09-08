@@ -80,7 +80,7 @@ function RenderChart({ chart }: { chart: Chart }) {
             <div className="d-flex flex-column p-3">
                 <div className="d-flex align-items-center mb-2">
                     <h3 className="m-0 fs-2 fw-lighter">{name}</h3>
-                    <div className="ms-2 rounded border px-2" style={{ fontSize: "0.9rem" }}>
+                    <div className="ms-3 rounded border px-2" style={{ fontSize: "0.9rem" }}>
                         <span className="fw-bolder" title="Chart version.">{latestVersion.version}</span>
                         <span>/</span>
                         <span className="" title="App version.">{latestVersion.appVersion}</span>

@@ -1,7 +1,7 @@
 import YAML from 'js-yaml'
 
 export async function getChartIndex(): Promise<ChartIndex> {
-    const chartIndex = "/index.yaml";
+    const chartIndex = "index.yaml";
     let indexYaml = await fetch(chartIndex).then(response => response.text());
     let index = YAML.load(indexYaml) as any;
     return {
@@ -35,7 +35,7 @@ export async function getChartIndex(): Promise<ChartIndex> {
 }
 
 export async function getChartVersionValues(chartName: string, version: string) {
-    let chartValues = `/values/${chartName}-${version}.yaml`;
+    let chartValues = `values/${chartName}-${version}.yaml`;
     let yaml = await fetch(chartValues).then(response => response.text());
     return yaml;
 }
