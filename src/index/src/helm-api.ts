@@ -9,7 +9,7 @@ export async function getChartIndex(): Promise<ChartIndex> {
         charts: Object.keys(index.entries)
             .map<Chart>(name => {
                 let versions = index.entries[name] as any[];
-                let lastVersion = versions[versions.length - 1];
+                let lastVersion = versions[0];
                 return {
                     name: name,
                     description: lastVersion.description,
