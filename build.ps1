@@ -7,16 +7,23 @@ param(
 $root = $PSScriptRoot
 $srcPath = [System.IO.Path]::GetFullPath("$root/src")
 $distPath = [System.IO.Path]::GetFullPath($Output)
+$valuesPath = [System.IO.Path]::GetFullPath("$distPath/values")
 
 # Cleanup
 Write-Host "Cleaning $distPath..."
 New-Item -Path $distPath -ItemType Directory -ErrorAction Ignore | Out-Null
 Remove-Item -Path $distPath/* -Recurse
+New-Item -Path $valuesPath -ItemType Directory
 
 # Stage
 Get-ChildItem -Path $srcPath -Recurse -Filter *.tgz -File | ForEach-Object {
-    Write-Host "Staging $($_.FullName) -> $distPath"
+    Write-Host "Staging $($_.FullName) -> $distPath..."
     $_ | Copy-Item -Destination $distPath
+
+    $name = $_.Name -replace ".tgz$"
+    $valuesPath = "$valuesPath/$name.yaml"
+    Write-Host "Writing values to $valuesPath..."
+    helm show values $_.FullName > $valuesPath
 }
 
 # Build index.
