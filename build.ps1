@@ -21,9 +21,9 @@ Get-ChildItem -Path $srcPath -Recurse -Filter *.tgz -File | ForEach-Object {
     $_ | Copy-Item -Destination $distPath
 
     $name = $_.Name -replace ".tgz$"
-    $valuesPath = "$valuesPath/$name.yaml"
-    Write-Host "Writing values to $valuesPath..."
-    helm show values $_.FullName > $valuesPath
+    $chartValuesPath = "$valuesPath/$name.yaml"
+    Write-Host "Writing values to $chartValuesPath..."
+    helm show values $_.FullName > $chartValuesPath
 }
 
 # Build index.
