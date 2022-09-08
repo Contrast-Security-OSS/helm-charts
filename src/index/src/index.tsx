@@ -90,10 +90,10 @@ function RenderChart({ chart }: { chart: Chart }) {
                     </h3>
                     <div className="d-flex ms-auto">
                         <Cell label="Chart version">
-                            {latestVersion.version}
+                            v{latestVersion.version}
                         </Cell>
                         <Cell label="App version" className="ms-3">
-                            {latestVersion.appVersion}
+                            v{latestVersion.appVersion}
                         </Cell>
                         <Cell label="Release date" title={latestVersion.created} className="ms-3">
                             {DateTime.fromISO(latestVersion.created).toLocaleString()}

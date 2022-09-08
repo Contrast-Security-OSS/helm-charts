@@ -6,6 +6,7 @@ import { Chart, ChartVersion } from '../../helm-api';
 import { Cell } from '../cell';
 import { Code } from '../code';
 import { ChartVersionValuesModel } from './chart-version-values-model';
+import { MdLabelOutline } from "react-icons/md";
 
 export interface ChartVersionsModelProps {
     show?: boolean;
@@ -46,6 +47,7 @@ function Version({ x, name }: { x: ChartVersion, name: string }) {
         <li className="list-group-item d-flex flex-column">
             <div className='d-flex'>
                 <div className='d-flex align-items-center pe-4'>
+                    <MdLabelOutline className="me-1" />
                     v{x.version}
                 </div>
                 <div className='d-flex justify-content-evenly flex-fill'>
