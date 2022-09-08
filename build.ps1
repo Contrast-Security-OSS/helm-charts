@@ -13,7 +13,7 @@ $valuesPath = [System.IO.Path]::GetFullPath("$distPath/values")
 Write-Host "Cleaning $distPath..."
 New-Item -Path $distPath -ItemType Directory -ErrorAction Ignore | Out-Null
 Remove-Item -Path $distPath/* -Recurse
-New-Item -Path $valuesPath -ItemType Directory
+New-Item -Path $valuesPath -ItemType Directory | Out-Null
 
 # Stage
 Get-ChildItem -Path $srcPath -Recurse -Filter *.tgz -File | ForEach-Object {
@@ -32,3 +32,15 @@ helm repo index $distPath --url $ChartRepositoryUrl
 
 Write-Host "Generating html index for $distPath..."
 tree -H $ChartRepositoryUrl -L 3 --noreport --charset utf-8 -o $distPath/index.html --du -h -T "Contrast Security, Inc Helm charts" -- $distPath
+
+try
+{
+    Push-Location $srcPath/index/
+    yarn install --frozen-lockfile
+    yarn build --public-url $ChartRepositoryUrl
+    Copy-Item -Recurse -Path ./dist/* -Destination $distPath
+}
+finally
+{
+    Pop-Location
+}

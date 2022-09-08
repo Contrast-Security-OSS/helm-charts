@@ -1,0 +1,32 @@
+{
+  "name": "contrast-helm-charts",
+  "version": "1.0.0",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "private": true,
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "devDependencies": {
+    "@parcel/transformer-sass": "2.7.0",
+    "@types/luxon": "^3.0.1",
+    "@types/react": "^18.0.18",
+    "@types/react-dom": "^18.0.6",
+    "buffer": "^6.0.3",
+    "parcel": "^2.7.0",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "@fontsource/roboto": "^4.5.8",
+    "@popperjs/core": "^2.11.6",
+    "@types/js-yaml": "^4.0.5",
+    "bootstrap": "^5.2.1",
+    "clsx": "^1.2.1",
+    "js-yaml": "^4.1.0",
+    "luxon": "^3.0.3",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.5.0",
+    "react-dom": "^18.2.0"
+  }
+}

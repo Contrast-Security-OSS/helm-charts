@@ -19,6 +19,10 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: tree
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
 
       - name: Checkout
         uses: actions/checkout@v3

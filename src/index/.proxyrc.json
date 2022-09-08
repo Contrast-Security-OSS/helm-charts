@@ -1,0 +1,10 @@
+{
+    "/index.yaml": {
+        "target": "https://contrastsecurity.dev/helm-charts/",
+        "changeOrigin": true
+    },
+    "/values": {
+        "target": "https://contrastsecurity.dev/helm-charts/",
+        "changeOrigin": true
+    }
+}
