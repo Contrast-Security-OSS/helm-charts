@@ -34,8 +34,12 @@ export async function getChartIndex(): Promise<ChartIndex> {
     };
 }
 
-export async function getChartVersionValues(chartName: string, version: string) {
-    let chartValues = `values/${chartName}-${version}.yaml`;
+export function getChartVersionValuesLink(chartName: string, version: string): string {
+    return `values/${chartName}-${version}.yaml`;
+}
+
+export async function getChartVersionValues(chartName: string, version: string): Promise<string> {
+    let chartValues = getChartVersionValuesLink(chartName, version);
     let yaml = await fetch(chartValues).then(response => response.text());
     return yaml;
 }

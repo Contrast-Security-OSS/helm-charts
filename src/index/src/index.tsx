@@ -4,6 +4,10 @@ import { Code } from "./components/code";
 import { Frame } from "./components/frame";
 import { Chart, ChartIndex, getChartIndex } from './helm-api';
 import { DateTime } from "luxon";
+import { ChartVersionsModel } from "./components/models/chart-versions-model";
+import { ChartVersionValuesModel } from "./components/models/chart-version-values-model";
+import { MdHelpOutline, MdAnchor, MdLabelOutline, MdOutlineDocumentScanner, MdCopyright } from "react-icons/md";
+import { Cell } from "./components/cell";
 
 (function () {
     let container = document.getElementById('app');
@@ -23,31 +27,28 @@ function App() {
     let [index, setIndex] = useState<ChartIndex | null>(null);
     useEffect(() => void getChartIndex().then(setIndex).catch(console.warn), []);
 
-    console.log(index);
-
     return (
         <Frame>
-            {!index && (
-                <div>Loading...</div>
-            )}
-            {!!index && (
-                <RenderIndex index={index} />
-            )}
+            <RenderIndex index={index} />
+            <footer className="mt-4 text-muted d-flex justify-content-center" style={{ fontSize: "0.9rem" }}>
+                <div className="">
+                    {!!index && (
+                        <>Helm index generated on <span title={index.generated}>{DateTime.fromISO(index.generated).toLocaleString()}</span> · </>
+                    )}
+                    Copyright <MdCopyright /> 2022 Contrast Security, Inc
+                </div>
+            </footer>
         </Frame >
     );
 }
 
-function RenderIndex({ index }: { index: ChartIndex }) {
+function RenderIndex({ index }: { index: ChartIndex | null }) {
 
     const usageText = `# Add this Helm repository:
 $ helm repo add contrast https://contrastsecurity.dev/helm-charts
-$ helm repo update contrast
 
-# Locate available charts.
-$ helm search repo contrast
-
-# Show the supported values for a chart.
-$ helm show values contrast/contrast-agent-operator`;
+# Update your local repository cache.
+$ helm repo update contrast`;
 
     return (
         <div className="d-flex flex-column align-items-center w-100">
@@ -56,15 +57,16 @@ $ helm show values contrast/contrast-agent-operator`;
             <Code>{usageText}</Code>
 
             <h2 className="mt-4">Charts</h2>
-            {index.charts.map(x => (
+
+            {!index && (
+                <div>Fetching index...</div>
+            )}
+
+            {!!index && index.charts.map(x => (
                 <RenderChart key={x.name} chart={x} />
             ))}
 
             <div className="my-4"></div>
-
-            <footer className="mt-4 text-muted" title={index.generated}>
-                Index generated on {DateTime.fromISO(index.generated).toLocaleString()}
-            </footer>
         </div>
     )
 }
@@ -73,20 +75,29 @@ function RenderChart({ chart }: { chart: Chart }) {
 
     let { name, description, homeUrl, latestVersion, versions } = chart;
 
-    let olderVersionsCount = versions.length - 1;
+    let versionsCount = versions.length;
+
+    let [showVersionsModel, setShowVersionsModel] = useState<boolean>(false);
+    let [showValuesModel, setShowValuesModel] = useState<boolean>(false);
 
     return (
         <div className="w-100 d-flex flex-column rounded border mb-2">
             <div className="d-flex flex-column p-3">
                 <div className="d-flex align-items-center mb-2">
-                    <h3 className="m-0 fs-2 fw-lighter">{name}</h3>
-                    <div className="ms-3 rounded border px-2" style={{ fontSize: "0.9rem" }}>
-                        <span className="fw-bolder" title="Chart version.">{latestVersion.version}</span>
-                        <span>/</span>
-                        <span className="" title="App version.">{latestVersion.appVersion}</span>
-                    </div>
-                    <div className="ms-2 rounded border px-2" style={{ fontSize: "0.9rem" }} title={latestVersion.created}>
-                        {DateTime.fromISO(latestVersion.created).toLocaleString()}
+                    <h3 className="m-0 fs-2 fw-lighter d-flex align-items-center">
+                        <MdAnchor className="me-2" />
+                        {name}
+                    </h3>
+                    <div className="d-flex ms-auto">
+                        <Cell label="Chart version">
+                            {latestVersion.version}
+                        </Cell>
+                        <Cell label="App version" className="ms-3">
+                            {latestVersion.appVersion}
+                        </Cell>
+                        <Cell label="Release date" title={latestVersion.created} className="ms-3">
+                            {DateTime.fromISO(latestVersion.created).toLocaleString()}
+                        </Cell>
                     </div>
                 </div>
 
@@ -97,25 +108,28 @@ function RenderChart({ chart }: { chart: Chart }) {
             <Code className="rounded-0">$ helm install my-release-name contrast/{name}</Code>
 
             <div className="p-3 d-flex justify-content-evenly">
-                <a href="#">
-                    {olderVersionsCount == 0 && (
-                        <span>See 0 older versions</span>
-                    )}
-                    {olderVersionsCount == 1 && (
-                        <span>See {olderVersionsCount} older version</span>
-                    )}
-                    {olderVersionsCount > 1 && (
-                        <span>See {olderVersionsCount} older versions</span>
-                    )}
-                </a>
-                <a href={homeUrl} target="_blank">
-                    Documentation
-                </a>
-                <a href="#">
-                    Supported values
-                </a>
+                <div className="d-flex align-items-center">
+                    <MdLabelOutline className="me-1" />
+                    <a href="#" onClick={() => setShowVersionsModel(true)}>
+                        See {versionsCount} versions
+                    </a>
+                </div>
+                <div className="d-flex align-items-center">
+                    <MdHelpOutline className="me-1" />
+                    <a href={homeUrl} target="_blank">
+                        Documentation
+                    </a>
+                </div>
+                <div className="d-flex align-items-center">
+                    <MdOutlineDocumentScanner className="me-1" />
+                    <a href="#" onClick={() => setShowValuesModel(true)}>
+                        Supported values
+                    </a>
+                </div>
             </div>
 
+            <ChartVersionsModel chart={chart} show={showVersionsModel} onHide={() => setShowVersionsModel(false)} />
+            <ChartVersionValuesModel chartName={chart.name} chartVersion={latestVersion.version} show={showValuesModel} onHide={() => setShowValuesModel(false)} />
         </div>
     )
 }
