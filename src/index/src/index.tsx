@@ -35,7 +35,7 @@ function App() {
                     {!!index && (
                         <>Helm index generated on <span title={index.generated}>{DateTime.fromISO(index.generated).toLocaleString()}</span> · </>
                     )}
-                    Copyright <MdCopyright /> 2022 Contrast Security, Inc
+                    Copyright <MdCopyright /> {DateTime.now().year} Contrast Security, Inc
                 </div>
             </footer>
         </Frame >
