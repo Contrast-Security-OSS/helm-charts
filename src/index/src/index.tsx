@@ -7,6 +7,7 @@ import { DateTime } from "luxon";
 import { ChartVersionsModel } from "./components/models/chart-versions-model";
 import { ChartVersionValuesModel } from "./components/models/chart-version-values-model";
 import { MdHelpOutline, MdAnchor, MdLabelOutline, MdOutlineDocumentScanner, MdCopyright } from "react-icons/md";
+import { FaGithub } from "react-icons/fa";
 import { Cell } from "./components/cell";
 
 (function () {
@@ -30,12 +31,23 @@ function App() {
     return (
         <Frame>
             <RenderIndex index={index} />
-            <footer className="mt-4 text-muted d-flex justify-content-center" style={{ fontSize: "0.9rem" }}>
-                <div className="">
+            <footer className="mt-4 d-flex flex-column align-items-center">
+                <div className="mt-1 text-muted d-flex justify-content-evenly align-items-center w-100" style={{ fontSize: "0.9rem" }}>
                     {!!index && (
-                        <>Helm index generated on <span title={index.generated}>{DateTime.fromISO(index.generated).toLocaleString()}</span> · </>
+                        <>
+                            <span>
+                                Helm index generated on <span title={index.generated}>{DateTime.fromISO(index.generated).toLocaleString()}</span>
+                            </span>
+                            <span className="mx-2">
+                                <a href="https://github.com/Contrast-Security-OSS/helm-charts" className="text-muted" target="_blank">
+                                    <FaGithub style={{ fontSize: "1.6rem" }} />
+                                </a>
+                            </span>
+                        </>
                     )}
-                    Copyright <MdCopyright /> {DateTime.now().year} Contrast Security, Inc
+                    <span>
+                        Copyright <MdCopyright /> {DateTime.now().year} Contrast Security, Inc
+                    </span>
                 </div>
             </footer>
         </Frame >
