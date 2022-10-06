@@ -1,5 +1,3 @@
-
-import { DateTime } from 'luxon';
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { Chart, ChartVersion } from '../../helm-api';
@@ -53,9 +51,6 @@ function Version({ x, name }: { x: ChartVersion, name: string }) {
                 <div className='d-flex justify-content-evenly flex-fill'>
                     <div className='d-flex flex-column'>
                         <Cell label='App version'>v{x.appVersion}</Cell>
-                    </div>
-                    <div className='d-flex flex-column'>
-                        <Cell label='Release date' title={x.created}>{DateTime.fromISO(x.created).toLocaleString()}</Cell>
                     </div>
                     <div className='d-flex flex-column'>
                         <Cell label='Required K8s version'>{x.kubeVersion}</Cell>

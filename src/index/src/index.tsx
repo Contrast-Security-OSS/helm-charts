@@ -107,9 +107,6 @@ function RenderChart({ chart }: { chart: Chart }) {
                         <Cell label="App version" className="ms-3">
                             v{latestVersion.appVersion}
                         </Cell>
-                        <Cell label="Release date" title={latestVersion.created} className="ms-3">
-                            {DateTime.fromISO(latestVersion.created).toLocaleString()}
-                        </Cell>
                     </div>
                 </div>
 
