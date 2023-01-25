@@ -6,12 +6,12 @@ Using this repository:
 
 ```
 # Add this Helm repository:
-helm repo add contrast-security https://contrastsecurity.dev/helm-charts
-helm repo update contrast-security
+helm repo add contrast https://contrastsecurity.dev/helm-charts
+helm repo update contrast
 
 # Locate available charts.
-helm search repo contrast-security
+helm search repo contrast
 
 # Show the supported values for a chart.
-helm show values contrast-security/contrast-agent-operator
+helm show values contrast/contrast-agent-operator
 ```
