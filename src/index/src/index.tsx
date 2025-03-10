@@ -114,7 +114,7 @@ function RenderChart({ chart }: { chart: Chart }) {
                     {description}
                 </div>
             </div>
-            <Code className="rounded-0">$ helm install my-release-name contrast/{name}</Code>
+            <Code className="rounded-0">$ helm install --namespace contrast-agent-operator --create-namespace contrast-agent-operator contrast/contrast-agent-operator</Code>
 
             <div className="p-3 d-flex justify-content-evenly">
                 <div className="d-flex align-items-center">
