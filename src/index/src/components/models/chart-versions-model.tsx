@@ -71,7 +71,7 @@ function Version({ x, name }: { x: ChartVersion, name: string }) {
                     </div>
                 </div>
             </div>
-            <Code className='mt-3 mb-1'>$ helm install my-release-name contrast/{name} --version {x.version}</Code>
+            <Code className='mt-3 mb-1'>$ helm install --namespace contrast-agent-operator --create-namespace contrast-agent-operator contrast/contrast-agent-operator --version {x.version}</Code>
             <ChartVersionValuesModel chartName={name} chartVersion={x.version} show={showValuesModel} onHide={() => setShowValuesModel(false)} />
         </li>
     )
