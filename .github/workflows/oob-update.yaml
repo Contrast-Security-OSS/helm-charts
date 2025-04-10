@@ -9,10 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Helm
-        uses: azure/setup-helm@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
+        uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Validate Event
         id: validate-event
         run: |
@@ -53,7 +51,7 @@ jobs:
 
       - name: Download Chart
         id: download-artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@07ab29fd4a977ae4d2b275087cf67563dfdf0295 # v9
         with:
           github_token: ${{ secrets.GH_PR_WRITE_PAT }}
           repo: ${{ steps.validate-event.outputs.repo }}
@@ -81,7 +79,7 @@ jobs:
         shell: pwsh
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f # v7.0.6
         id: create-pr
         with:
           add-paths: |
@@ -106,10 +104,8 @@ jobs:
             oob-update
           token: ${{ secrets.GH_PR_WRITE_PAT }}
 
-      - uses: peter-evans/enable-pull-request-automerge@v2
+      - name: Enable Pull Request Automerge
         if: steps.create-pr.outputs.pull-request-operation == 'created'
-        with:
-          # Uses the dispatch service user, using the dotnet PAT.
-          token: ${{ secrets.GH_PR_WRITE_PAT }}
-          pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
-          merge-method: rebase
+        run: gh pr merge --rebase --auto "${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GH_PR_WRITE_PAT }}
