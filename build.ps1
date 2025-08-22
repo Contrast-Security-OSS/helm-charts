@@ -30,8 +30,10 @@ Get-ChildItem -Path $srcPath -Recurse -Filter *.tgz -File | ForEach-Object {
 Write-Host "Generating charts index for $distPath..."
 helm repo index $distPath --url $ChartRepositoryUrl
 
-Write-Host "Generating html index for $distPath..."
+Write-Host "Copying static assets to $distPath..."
+Copy-Item -Recurse -Path './static/*' $distPath
 
+Write-Host "Generating html index for $distPath..."
 try
 {
     Push-Location $srcPath/index/
