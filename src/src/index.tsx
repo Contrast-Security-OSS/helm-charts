@@ -105,7 +105,7 @@ function RenderChart({ chart }: { chart: Chart }) {
                             v{latestVersion.version}
                         </Cell>
                         <Cell label="App version" className="ms-3">
-                            v{latestVersion.appVersion}
+                            <a href={'https://github.com/Contrast-Security-OSS/agent-operator/releases/tag/v' + latestVersion.appVersion}>v{latestVersion.appVersion}</a>
                         </Cell>
                     </div>
                 </div>
@@ -115,7 +115,7 @@ function RenderChart({ chart }: { chart: Chart }) {
                 </div>
             </div>
             <Code className="rounded-0">$ helm install --namespace contrast-agent-operator --create-namespace contrast-agent-operator contrast/contrast-agent-operator</Code>
-
+            <div className="pt-2 mx-auto fw-bold">Major versions may include breaking changes, see <a href="https://docs.contrastsecurity.com/en/helm-upgrades.html">upgrade docs</a> and <a href={'https://github.com/Contrast-Security-OSS/agent-operator/releases/tag/v' + latestVersion.appVersion}>release notes</a>.</div>
             <div className="p-3 d-flex justify-content-evenly">
                 <div className="d-flex align-items-center">
                     <MdLabelOutline className="me-1" />
@@ -136,7 +136,6 @@ function RenderChart({ chart }: { chart: Chart }) {
                     </a>
                 </div>
             </div>
-
             <ChartVersionsModel chart={chart} show={showVersionsModel} onHide={() => setShowVersionsModel(false)} />
             <ChartVersionValuesModel chartName={chart.name} chartVersion={latestVersion.version} show={showValuesModel} onHide={() => setShowValuesModel(false)} />
         </div>

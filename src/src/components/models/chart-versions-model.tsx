@@ -50,7 +50,7 @@ function Version({ x, name }: { x: ChartVersion, name: string }) {
                 </div>
                 <div className='d-flex justify-content-evenly flex-fill'>
                     <div className='d-flex flex-column'>
-                        <Cell label='App version'>v{x.appVersion}</Cell>
+                        <Cell label='App version'><a href={'https://github.com/Contrast-Security-OSS/agent-operator/releases/tag/v' + x.appVersion}>v{x.appVersion}</a></Cell>
                     </div>
                     <div className='d-flex flex-column'>
                         <Cell label='Required K8s version'>{x.kubeVersion}</Cell>
